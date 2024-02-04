@@ -29,7 +29,7 @@ To delete a post, you'll need the id of the post you want to erase. GET method c
 
 # Getting one or many post (GET method)
 
-To get all the posts, you can set no filter, if you want to have only some meeting some conditions, you can set as many filters as you need. Filters as only few conditions to examine and compare, they'll be enhanced in subsequent versions.
+To get all the posts, you can set no filter. If you want to have only some, you can set as many filters as you need. Filters have only few conditions to examine and compare, they'll be enhanced in subsequent versions.
 
 ## Installation
 
