@@ -1,14 +1,16 @@
 {
-  "name": "red-test",
-  "version": "1.0.0",
-  "description": "",
+  "name": "node-red-humhub-services",
+  "version": "0.1.0",
+  "description": "A node providing the services offered by the RESTful API of Humhub.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Pierre-Alexis Fabbro <pierre.alexis.fabbro.pro@gmail.com>",
+  "license": "MIT",
+  "keywords": [ "node-red","humhub" ],
   "node-red" : {
+    "version": ">=2.0.0",
     "nodes": {
         "humhub-services": "humhub-services.js"
     }
