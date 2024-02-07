@@ -1,0 +1,258 @@
+[
+    {
+        "id": "ab3bce79991eb47a",
+        "type": "tab",
+        "label": "Flux 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "41eb0323dd84a4c0",
+        "type": "inject",
+        "z": "ab3bce79991eb47a",
+        "name": "Inject",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "KJSDKGJLQDWFMC",
+        "payloadType": "str",
+        "x": 150,
+        "y": 260,
+        "wires": [
+            [
+                "a0c268ac0df701db"
+            ]
+        ]
+    },
+    {
+        "id": "79090246107cd1b6",
+        "type": "debug",
+        "z": "ab3bce79991eb47a",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 700,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "906efda6a48fefea",
+        "type": "inject",
+        "z": "ab3bce79991eb47a",
+        "name": "Inject",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "18",
+        "payloadType": "str",
+        "x": 150,
+        "y": 420,
+        "wires": [
+            [
+                "db214fa2e19f7f5f"
+            ]
+        ]
+    },
+    {
+        "id": "764bad22d0fdc2c7",
+        "type": "split",
+        "z": "ab3bce79991eb47a",
+        "name": "",
+        "splt": "\\n",
+        "spltType": "str",
+        "arraySplt": 1,
+        "arraySpltType": "len",
+        "stream": false,
+        "addname": "",
+        "x": 570,
+        "y": 260,
+        "wires": [
+            [
+                "79090246107cd1b6"
+            ]
+        ]
+    },
+    {
+        "id": "695daee3ee6d02db",
+        "type": "comment",
+        "z": "ab3bce79991eb47a",
+        "name": "Get all posts",
+        "info": "",
+        "x": 150,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "2103a85f6ced42a0",
+        "type": "comment",
+        "z": "ab3bce79991eb47a",
+        "name": "Delete one post",
+        "info": "",
+        "x": 160,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "a0c268ac0df701db",
+        "type": "humhub-services",
+        "z": "ab3bce79991eb47a",
+        "creds": "81739e70269d8278",
+        "contentType": "Posts",
+        "method": "GET",
+        "filters": [
+            {
+                "filterKey": "id",
+                "filterOperator": ">",
+                "filterValue": "2",
+                "filterValueType": "str"
+            }
+        ],
+        "putPayload": [
+            {
+                "value": "payload.message",
+                "type": "msg"
+            },
+            {
+                "value": "payload.scheduled_at",
+                "type": "msg"
+            },
+            {
+                "value": "payload.topics",
+                "type": "msg"
+            }
+        ],
+        "postPayload": [
+            {
+                "value": "payload.message",
+                "type": "msg"
+            },
+            {
+                "value": "payload.scheduled_at",
+                "type": "msg"
+            },
+            {
+                "value": "payload.topics",
+                "type": "msg"
+            },
+            {
+                "value": "payload.topics",
+                "type": "msg"
+            }
+        ],
+        "idd": "",
+        "iddtype": "num",
+        "x": 410,
+        "y": 260,
+        "wires": [
+            [
+                "764bad22d0fdc2c7"
+            ]
+        ]
+    },
+    {
+        "id": "db214fa2e19f7f5f",
+        "type": "humhub-services",
+        "z": "ab3bce79991eb47a",
+        "creds": "81739e70269d8278",
+        "contentType": "Posts",
+        "method": "DELETE",
+        "filters": [],
+        "putPayload": [
+            {
+                "value": "payload.message",
+                "type": "msg"
+            },
+            {
+                "value": "payload.scheduled_at",
+                "type": "msg"
+            },
+            {
+                "value": "payload.topics",
+                "type": "msg"
+            }
+        ],
+        "postPayload": [
+            {
+                "value": "payload.message",
+                "type": "msg"
+            },
+            {
+                "value": "payload.scheduled_at",
+                "type": "msg"
+            },
+            {
+                "value": "payload.topics",
+                "type": "msg"
+            },
+            {
+                "value": "payload.topics",
+                "type": "msg"
+            }
+        ],
+        "idd": "16",
+        "iddtype": "num",
+        "x": 410,
+        "y": 420,
+        "wires": [
+            [
+                "700443cb20b3d95b"
+            ]
+        ]
+    },
+    {
+        "id": "700443cb20b3d95b",
+        "type": "debug",
+        "z": "ab3bce79991eb47a",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 700,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "81739e70269d8278",
+        "type": "client-credentials",
+        "name": "mdp/login",
+        "username": "infra@tec6.fr",
+        "password": "_8}$E6i=XKLXbr5",
+        "bearer_token": "",
+        "host": "humhub.tec6.fr",
+        "authentification": "Login"
+    }
+]

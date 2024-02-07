@@ -1,6 +1,6 @@
 {
-  "name": "node-red-humhub-services",
-  "version": "0.1.0",
+  "name": "@tec6/node-red-humhub-services",
+  "version": "0.1.2",
   "description": "A node providing the services offered by the RESTful API of Humhub.",
   "main": "index.js",
   "scripts": {
@@ -8,11 +8,19 @@
   },
   "author": "Pierre-Alexis Fabbro <pierre.alexis.fabbro.pro@gmail.com>",
   "license": "MIT",
-  "keywords": [ "node-red","humhub" ],
-  "node-red" : {
+  "keywords": [
+    "node-red",
+    "humhub"
+  ],
+  "bugs":{"url": "https://github.com/Kyelink/node-humhub-services/issues",
+    "mail":"pierre.alexis.fabbro.pro@gmail.com"},
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "node-red": {
     "version": ">=2.0.0",
     "nodes": {
-        "humhub-services": "humhub-services.js"
+      "humhub-services": "humhub-services.js"
     }
-}
+  }
 }

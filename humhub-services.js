@@ -1,4 +1,4 @@
-const debug = false;
+
 
 module.exports = function(RED) {
 
@@ -20,15 +20,8 @@ module.exports = function(RED) {
         this.method = config.method;
         this.iddtype = config.iddtype;
         this.idd = config.idd;
-        console.log('\x1b[33m%s\x1b[0m',"method init at :"+ this.method);
-
-        console.log('\x1b[33m%s\x1b[0m',"token init at :"+ this.creds.bearer_token);
-        console.log('\x1b[33m%s\x1b[0m',"auth init at :"+ this.creds.authentification);
-        console.log('\x1b[33m%s\x1b[0m',"host init at :"+ this.creds.host);
+        
         node.on('input', function(msg) {
-            console.log('\x1b[33m%s\x1b[0m',"method inputed at :"+ this.method);
-            console.log('\x1b[33m%s\x1b[0m',"id inputed at :"+ this.iddtype);
-            console.log('\x1b[33m%s\x1b[0m',"token inputed at :"+ this.creds.bearer_token);
             
 			if(config.iddtype === "msg"){
 				var buildText = eval("msg." + config.idd)
@@ -43,21 +36,9 @@ module.exports = function(RED) {
 
 
             var url='https://'+this.creds.host+'/api/v1/post';
-            if(debug){
-                msg.payload=
-                this.method + " : method\n" +
-                this.iddtype + " : id type\n" +
-                this.idd + " : id\n" +
-                this.creds.authentification + " : authentification\n" +
-                this.creds.host + " : host\n" +
-                this.creds.bearer_token + " : token\n" +
-                this.creds.username + " : username\n" +
-                this.creds.password + " : password\n";
-                
-                node.send(msg);
-            }
             
-            else{
+            
+            
                 let headers = new Headers();
                 if(this.creds.authentification==="Token"){
                     headers.set('Authorization', 'Bearer ' + this.creds.bearer_token);
@@ -301,24 +282,7 @@ module.exports = function(RED) {
                     
                     
                     
-                    // let body = {
-                    //     "data": {
-                    //       "message": this.postPayload[1].value,
-                    //       "content": {
-                    //         "metadata": {
-                    //           "visibility": 1,
-                    //           "state": 1,
-                              
-                    //           "hidden": false,
-                    //           "pinned": false,
-                    //           "locked_comments": false
-                    //         },
-                    //         "topics": [
-                    //          {"name": this.postPayload[3].value}
-                    //         ]
-                    //       }
-                    //     }
-                    //   };
+                    
 
 
              
@@ -326,7 +290,7 @@ module.exports = function(RED) {
                 
                
                 
-            }
+            
 
         });
     }

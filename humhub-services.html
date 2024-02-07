@@ -97,7 +97,7 @@
 
 <script type="text/javascript">
     RED.nodes.registerType('humhub-services',{
-        category: 'function',
+        category: 'Humhub',
         color: '#a6bbcf',
         defaults: {
             
@@ -142,25 +142,38 @@
         },
         inputs: 1,
         outputs: 1,
-        icon: "font-awesome/fa-id-card-o",
+        icon: "humhub-logo.png",
         oneditprepare: function(){
+            //variables
             structGET={
-                        posts:["id","Message's length","Likes","Topics"]
+                        posts:[["id","num"],["Message's length","num"],["Likes","num"],["Topics","str"]]
             };
             structPOST={
-                        posts:[["container id","string"],["message","string"],["scheduled_at","string"],["topics","stringArray"]]
+                        posts:[["container id","num"],["message","str"],["scheduled_at","str"],["topics","str"]]
             };
             structPUT={
-                        posts:[["message","string"],["scheduled_at","string"],["topics","stringArray"]]
+                        posts:[["message","str"],["scheduled_at","str"],["topics","str"]]
             };    
+
+            //functions
+            function createSelectWidget(nodeClass, selectOptions,width,marginRight){
+                        var selectWidget = $('<select/>',{class:nodeClass,style:"width:"+width+"px; margin-right:"+marginRight+"px;"});
+                        for (var i=0; i<selectOptions.length; i++) {
+                            selectWidget.append($("<option></option>").val(selectOptions[i].value).text(selectOptions[i].label));
+                        }
+                        return selectWidget;
+                    }
             
 
-            console.log('prepare', this);
+            //code
             if(!this.putPayload){this.putPayload=[];}
             if(!this.postPayload){this.postPayload=[];}
-            const getKeys = structGET.posts;
+            const getKeys = structGET.posts.map(x=>x[0]);
+            const getKeysType = structGET.posts.map(x=>x[1]);
             const putKeys = structPUT.posts.map(x=>x[0]);
+            const putKeysType = structPUT.posts.map(x=>x[1]);
             const postKeys = structPOST.posts.map(x=>x[0]);
+            const postKeysType = structPOST.posts.map(x=>x[1]);
 
 
             for(let i=0;i<putKeys.length;i++){
@@ -171,13 +184,15 @@
                             .text(putKeys[i]+" :")
                             .appendTo(row);
                 var putPayloadWidget = $('<input/>',{class:"node-input-putPayload",id:"node-input-putPayload"+i,type:"text",style:"width: 300px;"})
-                .appendTo(row).typedInput({types:['msg','flow','global','str']});
+                .appendTo(row).typedInput({types:['msg','flow','global',putKeysType[i]]});
                 if(!this.putPayload[i]){
                     this.putPayload[i]={value:"payload."+putKeys[i],type:"msg"};
                     putPayloadWidget.typedInput('value',"payload."+putKeys[i]);
                     putPayloadWidget.typedInput('type',"msg");
                 }
                 else{
+                    
+
                     putPayloadWidget.typedInput('value',this.putPayload[i].value);
                     putPayloadWidget.typedInput('type',this.putPayload[i].type);
                 }
@@ -191,7 +206,7 @@
                        .text(postKeys[i]+" :")
                        .appendTo(row);
            var postPayloadWidget = $('<input/>',{class:"node-input-postPayload",id:"node-input-postPayload"+i,type:"text",style:"width: 300px;"})
-           .appendTo(row).typedInput({types:['msg','flow','global','str']});
+           .appendTo(row).typedInput({types:['msg','flow','global',postKeysType[i]]});
            if(!this.postPayload[i]){
                this.postPayload[i]={value:"payload."+postKeys[i],type:"msg"};
                postPayloadWidget.typedInput('value',"payload."+postKeys[i]);
@@ -281,62 +296,59 @@
                         whiteSpace: 'nowrap'
                     });
                     let fragment = document.createDocumentFragment();
+
+                    //initialize filterAttributes to default or copy them
                     let filterValue="";
                     if(opt.filterValue){filterValue=opt.filterValue;}
                     let filterValueType="str";
                     if(opt.filterValueType){filterValueType=opt.filterValueType;}
-
                     let filterKey="";
                     if(getKeys.length){filterKey=getKeys[0];}
                     if(opt.filterKey){filterKey=opt.filterKey;}
-
                     let filterOperator="===";
                     if(opt.filterOperator){filterOperator=opt.filterOperator;}
                    
-                   
+                   //create the 2 rows of a filter
                     var row1 = $('<div/>',{style:"display:flex; align-items: baseline"}).appendTo(fragment);
-                    
                     var row2 = $('<div/>', {style:"display:flex;align-items: baseline ;margin-top:8px;"}).appendTo(fragment);
                     
-
+                    
 
 
                     
-                    optionsFilter=getKeys.map(x => {return {value: x, label: x};});
-
-                    var filterKeyWidget = $('<select/>',{class:"node-input-filterKey",style:"width:110px; margin-right:10px;"});
-                    for (var i=0; i<optionsFilter.length; i++) {
-                        filterKeyWidget.append($("<option></option>").val(optionsFilter[i].value).text(optionsFilter[i].label));
-                    }
+                    let optionsFilter=getKeys.map(x => {return {value: x, label: x};});
+                    let filterKeyWidget=createSelectWidget("node-input-filterKey", optionsFilter,110,10);
                     filterKeyWidget.val(filterKey);
 
                     let optionsOperator=[{value:"===",label:"equal"},{value:"!==",label:"not equal"},{value:">",label:"greater than"},{value:"<",label:"lesser than"},{value:">=",label:"greater than or equal"},{value:"<=",label:"lesser than or equal"}];
-                    var filterOperatorWidget = $('<select/>',{class:"node-input-filterOperator", style:"width: 300px;"});
-                    for (var i=0; i<optionsOperator.length; i++) {
-                        filterOperatorWidget.append($("<option></option>").val(optionsOperator[i].value).text(optionsOperator[i].label));
-                    }
+                    let filterOperatorWidget = createSelectWidget("node-input-filterOperator", optionsOperator, 300,0);
                     filterOperatorWidget.val(filterOperator);
-                   
-
-             
-                    var filterValueWidget = $('<input/>',{class:"node-input-filterValue",type:"text",style:"width: 300px;"});
-                    
-                    
-                    
-
-                    console.log("postInit filterValueType = "+filterValueType,this);
 
                     filterKeyWidget.appendTo(row1);
                     filterOperatorWidget.appendTo(row1);
+                  
 
-
-                    
+                     
                     $('<div/>',{style:"display:inline-block;text-align:right; width:120px; padding-right:10px; box-sizing:border-box;"})
-                        .text(" Valeur :")
+                        .text(" Value :")
                         .appendTo(row2);
-                    filterValueWidget.appendTo(row2).typedInput({types:['msg','flow','global','str']});
+
+                    var filterValueWidget = $('<input/>',{class:"node-input-filterValue",type:"text",style:"width: 300px;"});
+                    filterValueWidget.appendTo(row2).typedInput({types:['msg','flow','global', getKeysType[getKeys.indexOf(filterKey)]]});
+                    filterKeyWidget.change(function () {
+                        filterValueWidget.remove();
+                        
+                        filterValueWidget=$('<input/>',{class:"node-input-filterValue",type:"text",style:"width: 300px;"});
+                        filterValueWidget.appendTo(row2).typedInput({types:['msg','flow','global', getKeysType[getKeys.indexOf($(this).val())]]});
+                        
+                        console.log("changed type to "+getKeysType[getKeys.indexOf($(this).val())],this);
+
+                    });
                     filterValueWidget.typedInput('value',filterValue);
+                    try{
                     filterValueWidget.typedInput('type',filterValueType);
+                    }
+                    catch(e){console.log(e);}
                     filterValueWidget.css('width','300px')
          
 
