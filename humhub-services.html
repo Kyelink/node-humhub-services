@@ -138,6 +138,12 @@
 				validate: RED.validators.typedInput('inputtype')
             },
             iddtype: { value: 'num' },
+            path:{
+				value: '',
+				required: false,
+				validate: RED.validators.typedInput('inputtype')
+            },
+            pathtype: { value: 'str' },
 
         },
         inputs: 1,
@@ -146,13 +152,16 @@
         oneditprepare: function(){
             //variables
             structGET={
-                        posts:[["id","num"],["Message's length","num"],["Likes","num"],["Topics","str"]]
+                        posts:[["id","num"],["Message's length","num"],["Likes","num"],["Topics","str"]],
+                        files:[["example filename", "str"],],
             };
             structPOST={
-                        posts:[["container id","num"],["message","str"],["scheduled_at","str"],["topics","str"]]
-            };
+                        posts:[["container id","num"],["message","str"],["scheduled_at","str"],["topics","str"]],
+                        files:[["file's path", "str"],["post id", "num"]],
+            };          
             structPUT={
-                        posts:[["message","str"],["scheduled_at","str"],["topics","str"]]
+                        posts:[["message","str"],["scheduled_at","str"],["topics","str"]],
+                        files:[["example filename", "str"],],
             };    
 
             //functions
@@ -163,65 +172,82 @@
                         }
                         return selectWidget;
                     }
-            
-
+            function emptyPutField(){
+                $('#node-input-putField').empty();
+            }
+            function emptyPostField(){
+                $('#node-input-postField').empty();
+            }
             //code
             if(!this.putPayload){this.putPayload=[];}
             if(!this.postPayload){this.postPayload=[];}
-            const getKeys = structGET.posts.map(x=>x[0]);
-            const getKeysType = structGET.posts.map(x=>x[1]);
-            const putKeys = structPUT.posts.map(x=>x[0]);
-            const putKeysType = structPUT.posts.map(x=>x[1]);
-            const postKeys = structPOST.posts.map(x=>x[0]);
-            const postKeysType = structPOST.posts.map(x=>x[1]);
 
+            console.log("type de contenu init à : "+this.contentType,this);
 
+            let getKeys = structGET[this.contentType].map(x=>x[0]);
+            let getKeysType = structGET[this.contentType].map(x=>x[1]);
+            let initContentType=this.contentType;
+            // let getKeys = structGET.posts.map(x=>x[0]);
+            // let getKeysType = structGET.posts.map(x=>x[1]);
+            let putKeys = structPUT[this.contentType].map(x=>x[0]);
+            let putKeysType = structPUT[this.contentType].map(x=>x[1]);
+            let postKeys = structPOST[this.contentType].map(x=>x[0]);
+            let postKeysType = structPOST[this.contentType].map(x=>x[1]);
+
+            console.log("putkeys : "+putKeys);
+
+            // createPutField();
             for(let i=0;i<putKeys.length;i++){
            
-                var row = $('<div/>',{style:"display:flex; align-items: baseline; margin-top:8px;"})
-                .appendTo($('#node-input-putField'));
-                $('<div/>',{style:"display:inline-block;text-align:right; width:120px; padding-right:10px; box-sizing:border-box;"})
-                            .text(putKeys[i]+" :")
-                            .appendTo(row);
-                var putPayloadWidget = $('<input/>',{class:"node-input-putPayload",id:"node-input-putPayload"+i,type:"text",style:"width: 300px;"})
-                .appendTo(row).typedInput({types:['msg','flow','global',putKeysType[i]]});
-                if(!this.putPayload[i]){
-                    this.putPayload[i]={value:"payload."+putKeys[i],type:"msg"};
-                    putPayloadWidget.typedInput('value',"payload."+putKeys[i]);
-                    putPayloadWidget.typedInput('type',"msg");
-                }
-                else{
-                    
-
-                    putPayloadWidget.typedInput('value',this.putPayload[i].value);
-                    putPayloadWidget.typedInput('type',this.putPayload[i].type);
-                }
-            }
- 
-            for(let i=0;i<postKeys.length;i++){
-           
            var row = $('<div/>',{style:"display:flex; align-items: baseline; margin-top:8px;"})
-           .appendTo($('#node-input-postField'));
+           .appendTo($('#node-input-putField'));
            $('<div/>',{style:"display:inline-block;text-align:right; width:120px; padding-right:10px; box-sizing:border-box;"})
-                       .text(postKeys[i]+" :")
+                       .text(putKeys[i]+" :")
                        .appendTo(row);
-           var postPayloadWidget = $('<input/>',{class:"node-input-postPayload",id:"node-input-postPayload"+i,type:"text",style:"width: 300px;"})
-           .appendTo(row).typedInput({types:['msg','flow','global',postKeysType[i]]});
-           if(!this.postPayload[i]){
-               this.postPayload[i]={value:"payload."+postKeys[i],type:"msg"};
-               postPayloadWidget.typedInput('value',"payload."+postKeys[i]);
-               postPayloadWidget.typedInput('type',"msg");
+           var putPayloadWidget = $('<input/>',{class:"node-input-putPayload",id:"node-input-putPayload"+i,type:"text",style:"width: 300px;"})
+           .appendTo(row).typedInput({types:['msg','flow','global',putKeysType[i]]});
+           if(!this.putPayload[i]){
+               this.putPayload[i]={value:"payload."+putKeys[i],type:"msg"};
+               putPayloadWidget.typedInput('value',"payload."+putKeys[i]);
+               putPayloadWidget.typedInput('type',"msg");
            }
            else{
-               postPayloadWidget.typedInput('value',this.postPayload[i].value);
-               postPayloadWidget.typedInput('type',this.postPayload[i].type);
+               
+
+               putPayloadWidget.typedInput('value',this.putPayload[i].value);
+               putPayloadWidget.typedInput('type',this.putPayload[i].type);
            }
-       }
+        }
+        
+            for(let i=0;i<postKeys.length;i++){
+           
+                var row = $('<div/>',{style:"display:flex; align-items: baseline; margin-top:8px;"})
+                .appendTo($('#node-input-postField'));
+                $('<div/>',{style:"display:inline-block;text-align:right; width:120px; padding-right:10px; box-sizing:border-box;"})
+                            .text(postKeys[i]+" :")
+                            .appendTo(row);
+                var postPayloadWidget = $('<input/>',{class:"node-input-postPayload",id:"node-input-postPayload"+i,type:"text",style:"width: 300px;"})
+                .appendTo(row).typedInput({types:['msg','flow','global',postKeysType[i]]});
+                if(!this.postPayload[i]){
+                    this.postPayload[i]={value:"payload."+postKeys[i],type:"msg"};
+                    postPayloadWidget.typedInput('value',"payload."+postKeys[i]);
+                    postPayloadWidget.typedInput('type',"msg");
+                }
+                else{
+                    postPayloadWidget.typedInput('value',this.postPayload[i].value);
+                    postPayloadWidget.typedInput('type',this.postPayload[i].type);
+                }
+            }
 
             $('#node-input-idd').typedInput({
                 default: 'num',
                 typeField: $("#node-input-iddtype"),
                 types: ['flow','global','msg','num']
+            });
+            $('#node-input-path').typedInput({
+                default: 'str',
+                typeField: $("#node-input-pathtype"),
+                types: ['flow','global','msg','str']
             });
 
             $("#node-input-contentType").typedInput({
@@ -229,12 +255,140 @@
                     {
                         value: "contentType",
                         options: [
-                            { value: "Posts", label: "Posts"},
+                            { value: "posts", label: "posts"},
+                            { value: "files", label: "files"},
 
                         ]
                     }
                 ]
             });
+
+            $("#node-input-contentType").change(function () {
+                console.log("changement de type de contenu à : "+$(this).val());
+                if(initContentType!=$(this).val()){
+                    this.filters=[];
+                    initContentType=$(this).val();
+                    $("#node-input-filter-container").editableList('empty');
+                    console.log("container content : "+this.filters);
+                    
+                getKeys = structGET[initContentType].map(x=>x[0]);
+                getKeysType = structGET[initContentType].map(x=>x[1]);
+                putKeys = structPUT[initContentType].map(x=>x[0]);
+                putKeysType = structPUT[initContentType].map(x=>x[1]);
+                postKeys = structPOST[initContentType].map(x=>x[0]);
+                postKeysType = structPOST[initContentType].map(x=>x[1]);
+                this.putPayload=[];
+                this.postPayload=[];
+                emptyPutField();
+                emptyPostField();
+                for(let i=0;i<putKeys.length;i++){
+           
+                    var row = $('<div/>',{style:"display:flex; align-items: baseline; margin-top:8px;"})
+                    .appendTo($('#node-input-putField'));
+                    $('<div/>',{style:"display:inline-block;text-align:right; width:120px; padding-right:10px; box-sizing:border-box;"})
+                                .text(putKeys[i]+" :")
+                                .appendTo(row);
+                    var putPayloadWidget = $('<input/>',{class:"node-input-putPayload",id:"node-input-putPayload"+i,type:"text",style:"width: 300px;"})
+                    .appendTo(row).typedInput({types:['msg','flow','global',putKeysType[i]]});
+                    
+                    this.putPayload[i]={value:"payload."+putKeys[i],type:"msg"};
+                    putPayloadWidget.typedInput('value',"payload."+putKeys[i]);
+                    putPayloadWidget.typedInput('type',"msg");
+                    
+                }
+                
+                for(let i=0;i<postKeys.length;i++){
+           
+                    var row = $('<div/>',{style:"display:flex; align-items: baseline; margin-top:8px;"})
+                    .appendTo($('#node-input-postField'));
+                    $('<div/>',{style:"display:inline-block;text-align:right; width:120px; padding-right:10px; box-sizing:border-box;"})
+                                .text(postKeys[i]+" :")
+                                .appendTo(row);
+                    var postPayloadWidget = $('<input/>',{class:"node-input-postPayload",id:"node-input-postPayload"+i,type:"text",style:"width: 300px;"})
+                    .appendTo(row).typedInput({types:['msg','flow','global',postKeysType[i]]});
+                    
+                    this.postPayload[i]={value:"payload."+postKeys[i],type:"msg"};
+                    postPayloadWidget.typedInput('value',"payload."+postKeys[i]);
+                    postPayloadWidget.typedInput('type',"msg");
+                    
+                }
+                
+                switch ($(this).val()) {
+                    case "posts":
+                        $('#row-path').hide();
+                        switch ($('#node-input-method').val()) {
+                            case 'PUT':
+                                $('#node-input-putField').show();
+                                $('#row-warning').hide();
+                                $('#row-idd').show();
+                                break;
+                            case 'GET':
+                                $('#row-idd').hide();
+                                $('#row-filter').show();
+                                
+                                break;
+                            case 'DELETE':
+                                $('#row-idd').show();
+                                $('#row-warning').hide();
+                                
+                                break;
+                            case 'POST':
+                            $('#row-warning').hide();    
+                            $('#row-idd').hide();
+                            $('#row-filter').hide();
+                            $('#node-input-putField').hide();
+                            $('#node-input-postField').show();
+                                
+                                break;
+                        
+                            default:
+                                break;
+                        }
+                        
+                        break;
+                    case "files":
+                        switch ($('#node-input-method').val()) {
+                            case 'PUT':
+                                $('#row-idd').hide();
+                                $('#node-input-putField').hide();
+                                $('#row-warning').show();
+                                $('#row-path').hide();
+                                break;
+                            case 'GET':
+                                $('#row-idd').show();
+                                $('#row-filter').hide();
+                                $('#row-path').show();
+                                break;
+                            case 'DELETE':
+                                $('#row-idd').hide();
+                                $('#row-warning').show();
+                                $('#row-path').hide();
+                                
+                                break;
+                            case 'POST':
+                                $('#row-warning').hide();    
+                                $('#row-idd').hide();
+                                $('#row-filter').hide();
+                                $('#node-input-putField').hide();
+                                $('#node-input-postField').show();
+                                $('#row-path').hide();
+                                
+                                break;
+                        
+                            default:
+                                break;
+                        }
+                        
+                        break;
+                
+                    default:
+                        break;
+                }
+
+                }
+                
+               
+            })
 
             $("#node-input-method").typedInput({
                 types: [
@@ -250,35 +404,59 @@
                 ]
             });
 
+            
+
             $("#node-input-method").change(function () {
                 switch ($(this).val()) {
                     case 'GET':
                         console.log('GET')
-                    
-                        $('#row-idd').hide();
-                        $('#row-filter').show();
+                        if($('#node-input-contentType').val()==='files'){
+                            $('#row-idd').show();
+                            $('#row-filter').hide();
+                        }
+                        else{
+                            $('#row-idd').hide();
+                            $('#row-filter').show();
+                        }
+                        
                         $('#node-input-putField').hide();
                         $('#node-input-postField').hide();
-
+                        $('#row-warning').hide();
                         break
                     case 'PUT':
                         console.log('PUT');
+                        if($('#node-input-contentType').val()==='files'){
+                            $('#row-idd').hide();
+                            $('#node-input-putField').hide();
+                            $('#row-warning').show();
+                        }
+                        else{
+                            $('#node-input-putField').show();
+                            $('#row-warning').hide();
+                            $('#row-idd').show();
+                        }
                        
-                        $('#row-idd').show();
+                        
                         $('#row-filter').hide();
-                        $('#node-input-putField').show();
+                        
                         $('#node-input-postField').hide();
 
                         break
                     case 'DELETE':
-                        console.log('DELETE');                       
+                        if($('#node-input-contentType').val()==='files'){
+                            $('#row-idd').hide();
+                            $('#row-warning').show();
+                        }
+                        else{                          
+                            $('#row-idd').show();
+                            $('#row-warning').hide();
+                        }                    
                         $('#row-filter').hide();
                         $('#node-input-putField').hide();
-                        $('#row-idd').show();
                         $('#node-input-postField').hide();
                         break
                     case 'POST':
-                        console.log('POST');
+                        $('#row-warning').hide();    
                         $('#row-idd').hide();
                         $('#row-filter').hide();
                         $('#node-input-putField').hide();
@@ -319,6 +497,7 @@
                     let optionsFilter=getKeys.map(x => {return {value: x, label: x};});
                     let filterKeyWidget=createSelectWidget("node-input-filterKey", optionsFilter,110,10);
                     filterKeyWidget.val(filterKey);
+                    console.log("filter key init at : "+filterKey)
 
                     let optionsOperator=[{value:"===",label:"equal"},{value:"!==",label:"not equal"},{value:">",label:"greater than"},{value:"<",label:"lesser than"},{value:">=",label:"greater than or equal"},{value:"<=",label:"lesser than or equal"}];
                     let filterOperatorWidget = createSelectWidget("node-input-filterOperator", optionsOperator, 300,0);
@@ -455,7 +634,11 @@
     </div>
 
     
-
+    <div class="form-row" id="row-path">
+		<label for="node-input-path"><i class="fa fa-hashtag"></i> Path</label>
+		<input type="text" id="node-input-path" style="width:70%">
+		<input type="hidden" id="node-input-pathtype">
+    </div>
 
     <div class="form-row" id="row-idd">
 		<label for="node-input-idd"><i class="fa fa-hashtag"></i> Id</label>
@@ -468,7 +651,12 @@
     </div>
 
     <div class="form-row" id="node-input-postField">
+
        
+    </div>
+
+    <div class="form-row" style="margin-bottom:0;" id="row-warning">
+        <i class="fa fa-warning">  Content not implemented by Humhub's API</i>
     </div>
     
 
