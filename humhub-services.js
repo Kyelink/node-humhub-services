@@ -658,6 +658,202 @@ module.exports = function(RED) {
                             default:
                                 break;
                         }
+                    
+
+                        case 'topics':
+                            url+="topic";
+                            switch (meth) {
+                                case 'DELETE':
+                                    url+='/';
+                                    url+=this.idd;
+                                    var options = {
+                                        method : this.method,
+                                        headers : headers
+                                    };
+                                    const promiseJson= fetch(url,options)
+                                    .then((response) => {if (!response.ok){node.error(response.statusText + ", status code : (" + response.status+")");}
+                                        return response.json();})
+                                    .then((res)=>{msg.payload=res;node.send(msg);})
+                                        break;
+                                case 'POST':
+                                    url+='/container/';
+                                    
+                                    headers.set('Content-Type', 'application/json; charset=UTF-8');
+                                    let postPayload = config.postPayload;
+                                                              
+                                                        
+                                    
+                                    let valueTemp="";
+                                    switch(postPayload[0].type){
+                                        case "str":
+                                            valueTemp=postPayload[0].value;                                    
+                                            break;
+                                        case "num":
+                                            valueTemp=postPayload[0].value;                                    
+                                            break;
+                                        case "msg":
+                                            valueTemp=eval("msg." + postPayload[0].value);
+                                            break
+                                        case "flow":
+                                            valueTemp= this.context().flow.get(postPayload[0].value);
+                                            break
+                                        case "global":
+                                            valueTemp= this.context().global.get(postPayload[0].value);
+                                            break                         
+                                        default:
+                                            break;
+                                    }
+                                    url+=valueTemp;
+                                    switch(postPayload[1].type){
+                                        case "str":
+                                            valueTemp=postPayload[1].value;                                    
+                                            break;
+                                        case "num":
+                                            valueTemp=postPayload[1].value;                                    
+                                            break;
+                                        case "msg":
+                                            valueTemp=eval("msg." + postPayload[1].value);
+                                            break
+                                        case "flow":
+                                            valueTemp= this.context().flow.get(postPayload[1].value);
+                                            break
+                                        case "global":
+                                            valueTemp= this.context().global.get(postPayload[1].value);
+                                            break                         
+                                        default:
+                                            break;
+                                    }
+                                    let body = {
+                                        
+                                        "name": valueTemp
+                                        
+                                    };
+    
+                                    
+    
+    
+    
+                                    var options = {
+                                        method : this.method,
+                                        headers : headers,
+                                        body : JSON.stringify(body),
+                                    };
+                                    const promiseJson2= fetch(url,options)
+                                    .then((response) => {if (!response.ok){node.error(response.statusText + ", status code : (" + response.status+")");}
+                                        return response.json();})
+                                    .then((res)=>{msg.payload=res;node.send(msg);})
+                                        break;
+    
+                                case 'PUT':
+                                    url+='/';
+                                    url+=this.idd;
+                                    headers.set('Content-Type', 'application/json; charset=UTF-8');
+                                    let putPayload = config.putPayload;
+                                                                
+                                                        
+                                    
+                                    let messagePut="";
+                                    switch(putPayload[0].type){
+                                        case "str":
+                                            messagePut=putPayload[0].value;                                    
+                                            break;
+                                        case "num":
+                                            messagePut=putPayload[0].value;                                    
+                                            break;
+                                        case "msg":
+                                            messagePut=eval("msg." + putPayload[0].value);
+                                            break
+                                        case "flow":
+                                            messagePut= this.context().flow.get(putPayload[0].value);
+                                            break
+                                        case "global":
+                                            messagePut= this.context().global.get(putPayload[0].value);
+                                            break                         
+                                        default:
+                                            break;
+                                    }
+                                    
+                                    let bodyPutComment = {
+                                        
+                                        "name": messagePut
+                                        
+                                    };
+    
+                                    
+    
+    
+    
+                                    var options = {
+                                        method : this.method,
+                                        headers : headers,
+                                        body : JSON.stringify(bodyPutComment),
+                                    };
+                                    const promiseJson3= fetch(url,options)
+                                    .then((response) => {if (!response.ok){node.error(response.statusText + ", status code : (" + response.status+")");}
+                                        return response.json();})
+                                    .then((res)=>{msg.payload=res;node.send(msg);})
+                                    break;
+                                
+                                case 'GET':
+                                    switch(config.topicIdType){
+                                        case 'all topics':
+                                            
+                                            
+    
+                                            break;
+                                        case 'topic id':
+                                            url+='/';
+
+                                            if(config.idd2type === "msg"){
+                                                var buildText = eval("msg." + config.idd2)
+                                                this.idd2 = buildText;
+                                            }else if(config.idd2type === "flow"){
+                                                this.idd2 = this.context().flow.get(config.idd2);
+                                            }else if(config.idd2type === "global"){
+                                                this.idd2 = this.context().global.get(config.idd2);
+                                            }else{
+                                                this.idd2 = config.idd2;
+                                            }
+
+                                            url+=this.idd2;
+                                            break;
+                                        case 'container id':
+                                            url+='/container/';
+
+                                            if(config.idd2type === "msg"){
+                                                var buildText = eval("msg." + config.idd2)
+                                                this.idd2 = buildText;
+                                            }else if(config.idd2type === "flow"){
+                                                this.idd2 = this.context().flow.get(config.idd2);
+                                            }else if(config.idd2type === "global"){
+                                                this.idd2 = this.context().global.get(config.idd2);
+                                            }else{
+                                                this.idd2 = config.idd2;
+                                            }
+
+                                            url+=this.idd2;
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                    var options = {
+                                        method : this.method,
+                                        headers : headers,
+                                    };
+                                    const promiseJson4= fetch(url,options)
+                                    .then((response) => {if (!response.ok){node.error(response.statusText + ", status code : (" + response.status+")");}
+                                        return response.json();})
+                                    .then((res)=>{msg.payload=res;node.send(msg);})
+                                    break;
+                                    
+    
+    
+    
+    
+                                    break;
+                                default:
+                                    break;
+                            }
                     default:
                         break;  
                 }
