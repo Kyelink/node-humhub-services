@@ -1,6 +1,6 @@
 {
   "name": "@tec6/node-red-humhub-services",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A node providing the services offered by the RESTful API of Humhub.",
   "main": "index.js",
   "scripts": {

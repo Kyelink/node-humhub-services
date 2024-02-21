@@ -487,6 +487,177 @@ module.exports = function(RED) {
                         }
                         break;
 
+                    case 'comments':
+                        url+="comment";
+                        switch (meth) {
+                            case 'DELETE':
+                                url+='/';
+                                url+=this.idd;
+                                var options = {
+                                    method : this.method,
+                                    headers : headers
+                                };
+                                const promiseJson= fetch(url,options)
+                                .then((response) => {if (!response.ok){node.error(response.statusText + ", status code : (" + response.status+")");}
+                                    return response.json();})
+                                .then((res)=>{msg.payload=res;node.send(msg);})
+                                    break;
+                            case 'POST':
+                        
+                                headers.set('Content-Type', 'application/json; charset=UTF-8');
+                                let postPayload = config.postPayload;
+                                                          
+                                                    
+                                
+                                let valueTemp="";
+                                switch(postPayload[0].type){
+                                    case "str":
+                                        valueTemp=postPayload[0].value;                                    
+                                        break;
+                                    case "num":
+                                        valueTemp=postPayload[0].value;                                    
+                                        break;
+                                    case "msg":
+                                        valueTemp=eval("msg." + postPayload[0].value);
+                                        break
+                                    case "flow":
+                                        valueTemp= this.context().flow.get(postPayload[0].value);
+                                        break
+                                    case "global":
+                                        valueTemp= this.context().global.get(postPayload[0].value);
+                                        break                         
+                                    default:
+                                        break;
+                                }
+                                const idOfPost=valueTemp;
+                                switch(postPayload[1].type){
+                                    case "str":
+                                        valueTemp=postPayload[1].value;                                    
+                                        break;
+                                    case "num":
+                                        valueTemp=postPayload[1].value;                                    
+                                        break;
+                                    case "msg":
+                                        valueTemp=eval("msg." + postPayload[1].value);
+                                        break
+                                    case "flow":
+                                        valueTemp= this.context().flow.get(postPayload[1].value);
+                                        break
+                                    case "global":
+                                        valueTemp= this.context().global.get(postPayload[1].value);
+                                        break                         
+                                    default:
+                                        break;
+                                }
+                                let body = {
+                                    "objectModel": "humhub\\modules\\post\\models\\Post",
+                                    "objectId": idOfPost,
+                                    "Comment": {
+                                    "message": valueTemp
+                                    }
+                                };
+
+                                
+
+
+
+                                var options = {
+                                    method : this.method,
+                                    headers : headers,
+                                    body : JSON.stringify(body),
+                                };
+                                const promiseJson2= fetch(url,options)
+                                .then((response) => {if (!response.ok){node.error(response.statusText + ", status code : (" + response.status+")");}
+                                    return response.json();})
+                                .then((res)=>{msg.payload=res;node.send(msg);})
+                                    break;
+
+                            case 'PUT':
+                                url+='/';
+                                url+=this.idd;
+                                headers.set('Content-Type', 'application/json; charset=UTF-8');
+                                let putPayload = config.putPayload;
+                                                            
+                                                    
+                                
+                                let messagePut="";
+                                switch(putPayload[0].type){
+                                    case "str":
+                                        messagePut=putPayload[0].value;                                    
+                                        break;
+                                    case "num":
+                                        messagePut=putPayload[0].value;                                    
+                                        break;
+                                    case "msg":
+                                        messagePut=eval("msg." + putPayload[0].value);
+                                        break
+                                    case "flow":
+                                        messagePut= this.context().flow.get(putPayload[0].value);
+                                        break
+                                    case "global":
+                                        messagePut= this.context().global.get(putPayload[0].value);
+                                        break                         
+                                    default:
+                                        break;
+                                }
+                                
+                                let bodyPutComment = {
+                                    "Comment": {
+                                    "message": messagePut
+                                    }
+                                };
+
+                                
+
+
+
+                                var options = {
+                                    method : this.method,
+                                    headers : headers,
+                                    body : JSON.stringify(bodyPutComment),
+                                };
+                                const promiseJson3= fetch(url,options)
+                                .then((response) => {if (!response.ok){node.error(response.statusText + ", status code : (" + response.status+")");}
+                                    return response.json();})
+                                .then((res)=>{msg.payload=res;node.send(msg);})
+                                break;
+                            
+                            case 'GET':
+                                switch(config.commentIdType){
+                                    case 'comment id':
+                                        url+='/';
+                                        url+=this.idd;
+
+                                        break;
+                                    case 'post id':
+                                        url+='/find-by-object?objectModel=humhub\\modules\\post\\models\\Post&objectId=';
+                                        url+=this.idd;
+                                        break;
+                                    case 'content id':
+                                        url+='/content/';
+                                        url+=this.idd;
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                var options = {
+                                    method : this.method,
+                                    headers : headers,
+                                };
+                                const promiseJson4= fetch(url,options)
+                                .then((response) => {if (!response.ok){node.error(response.statusText + ", status code : (" + response.status+")");}
+                                    return response.json();})
+                                .then((res)=>{msg.payload=res;node.send(msg);})
+                                break;
+                                
+
+
+
+
+                                break;
+                            default:
+                                break;
+                        }
                     default:
                         break;  
                 }
