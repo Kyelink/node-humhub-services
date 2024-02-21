@@ -138,6 +138,12 @@
 				validate: RED.validators.typedInput('inputtype')
             },
             iddtype: { value: 'num' },
+            idd2:{
+				value: '',
+				required: false,
+				validate: RED.validators.typedInput('inputtype')
+            },
+            idd2type: { value: 'num' },
             path:{
 				value: '',
 				required: false,
@@ -145,6 +151,7 @@
             },
             pathtype: { value: 'str' },
             commentIdType:{value:"comment id"},
+            topicIdType:{value:"topic id"},
 
         },
         inputs: 1,
@@ -156,16 +163,19 @@
                         posts:[["id","num"],["Message's length","num"],["Likes","num"],["Topics","str"]],
                         files:[["example filename", "str"],],
                         comments:[["example filename", "str"],],
+                        topics:[["example filename", "str"],],
             };
             structPOST={
                         posts:[["container id","num"],["message","str"],["scheduled_at","str"],["topics","str"]],
                         files:[["file's path", "str"],["post id", "num"]],
                         comments:[["post id", "num"],["message", "str"],],
+                        topics:[["container id", "num"],["name", "str"],],
             };          
             structPUT={
                         posts:[["message","str"],["scheduled_at","str"],["topics","str"]],
                         files:[["example filename", "str"],],
                         comments:[["message", "str"],],
+                        topics:[["new name", "str"],],
             };    
 
             //functions
@@ -191,6 +201,7 @@
                 $('#row-warning').hide();
                 $('#row-filter').show();
                 $('#commentDiv').hide();
+                $('#topicDiv').hide();
             }
             function manageGetFiles(){
                 $('#row-idd').show();
@@ -200,6 +211,7 @@
                 $('#node-input-postField').hide();
                 $('#row-warning').hide();
                 $('#commentDiv').hide();
+                $('#topicDiv').hide();
             }
             function manageGetComments(){
                 $('#row-path').hide();
@@ -209,6 +221,17 @@
                 $('#node-input-postField').hide();
                 $('#row-warning').hide();
                 $('#commentDiv').show();
+                $('#topicDiv').hide();
+            }
+            function manageGetTopics(){
+                $('#row-path').hide();
+                $('#row-idd').hide();
+                $('#row-filter').hide();
+                $('#node-input-putField').hide();
+                $('#node-input-postField').hide();
+                $('#row-warning').hide();
+                $('#commentDiv').hide();
+                $('#topicDiv').show();
             }
             function managePutPosts(){
                 $('#node-input-putField').show();
@@ -218,6 +241,7 @@
                 $('#node-input-postField').hide();
                 $('#row-path').hide();
                 $('#commentDiv').hide();
+                $('#topicDiv').hide();
             }
             function managePutFiles(){
                 $('#row-idd').hide();
@@ -227,6 +251,7 @@
                 $('#node-input-postField').hide();
                 $('#row-path').hide();
                 $('#commentDiv').hide();
+                $('#topicDiv').hide();
             }
             function managePutComments(){
                 $('#node-input-putField').show();
@@ -236,6 +261,17 @@
                 $('#node-input-postField').hide();
                 $('#row-path').hide();
                 $('#commentDiv').hide();
+                $('#topicDiv').hide();
+            }
+            function managePutTopics(){
+                $('#node-input-putField').show();
+                $('#row-warning').hide();
+                $('#row-idd').show();
+                $('#row-filter').hide();
+                $('#node-input-postField').hide();
+                $('#row-path').hide();
+                $('#commentDiv').hide();
+                $('#topicDiv').hide();
             }
             function managePostPosts(){
                 $('#row-warning').hide();    
@@ -244,7 +280,8 @@
                 $('#node-input-putField').hide();
                 $('#node-input-postField').show();
                 $('#row-path').hide();     
-                $('#commentDiv').hide();           
+                $('#commentDiv').hide(); 
+                $('#topicDiv').hide();          
             }
             function managePostFiles(){
                 $('#row-warning').hide();    
@@ -253,7 +290,8 @@
                 $('#node-input-putField').hide();
                 $('#node-input-postField').show();
                 $('#row-path').hide();     
-                $('#commentDiv').hide();          
+                $('#commentDiv').hide();       
+                $('#topicDiv').hide();   
             }
             function managePostComments(){
                 $('#row-warning').hide();    
@@ -263,6 +301,17 @@
                 $('#node-input-postField').show();
                 $('#row-path').hide();
                 $('#commentDiv').hide();
+                $('#topicDiv').hide();
+            }
+            function managePostTopics(){
+                $('#row-warning').hide();    
+                $('#row-idd').hide();
+                $('#row-filter').hide();
+                $('#node-input-putField').hide();
+                $('#node-input-postField').show();
+                $('#row-path').hide();
+                $('#commentDiv').hide();
+                $('#topicDiv').hide();
             }
             function manageDeletePosts(){
                 $('#row-idd').show();
@@ -272,6 +321,7 @@
                 $('#node-input-postField').hide();
                 $('#row-path').hide();
                 $('#commentDiv').hide();
+                $('#topicDiv').hide();
             }
             function manageDeleteFiles(){
                 $('#row-idd').hide();
@@ -281,6 +331,7 @@
                 $('#node-input-postField').hide();
                 $('#row-path').hide();
                 $('#commentDiv').hide();
+                $('#topicDiv').hide();
             }
             function manageDeleteComments(){
                 $('#row-idd').show();
@@ -290,6 +341,17 @@
                 $('#node-input-postField').hide();
                 $('#row-path').hide();
                 $('#commentDiv').hide();
+                $('#topicDiv').hide();
+            }
+            function manageDeleteTopics(){
+                $('#row-idd').show();
+                $('#row-warning').hide();
+                $('#row-filter').hide();
+                $('#node-input-putField').hide();
+                $('#node-input-postField').hide();
+                $('#row-path').hide();
+                $('#commentDiv').hide();
+                $('#topicDiv').hide();
             }
             //code
             if(!this.putPayload){this.putPayload=[];}
@@ -355,6 +417,11 @@
                 typeField: $("#node-input-iddtype"),
                 types: ['flow','global','msg','num']
             });
+            $('#node-input-idd2').typedInput({
+                default: 'num',
+                typeField: $("#node-input-idd2type"),
+                types: ['flow','global','msg','num']
+            });
             $('#node-input-path').typedInput({
                 default: 'str',
                 typeField: $("#node-input-pathtype"),
@@ -369,6 +436,7 @@
                             { value: "posts", label: "posts"},
                             { value: "files", label: "files"},
                             { value: "comments", label: "comments"},
+                            { value: "topics", label: "topics"},
 
                         ]
                     }
@@ -487,6 +555,27 @@
                         }
                         
                         break;
+                    
+                    case "topics":
+                        switch ($('#node-input-method').val()) {
+                            case 'PUT':
+                                managePutTopics();
+                                break;
+                            case 'GET':
+                                manageGetTopics();
+                                break;
+                            case 'DELETE':
+                                manageDeleteTopics();                                
+                                break;
+                            case 'POST':
+                                managePostTopics();                                
+                                break;
+                        
+                            default:
+                                break;
+                        }
+                        
+                        break;
                 
                     default:
                         break;
@@ -509,6 +598,30 @@
                     }
                 ]
             });
+            $("#node-input-topicIdType").typedInput({
+                types: [
+                    {
+                        value: "topicIdType",
+                        options: [
+                            { value: "all topics", label: "all topics"},
+                            { value: "container id", label: "container id"},
+                            { value: "topic id", label: "topic id"},
+                            
+                        ]
+                    }
+                ]
+            });
+            $("#node-input-topicIdType").change(function () {
+                switch ($(this).val()) {
+                    case 'all topics':
+                        $('#row-id-topic').hide();
+                        break;
+                    default:
+                        $('#row-id-topic').show();
+                        break;
+                }
+            });
+            
 
             $("#node-input-method").typedInput({
                 types: [
@@ -542,6 +655,9 @@
                             case 'comments':
                                 manageGetComments();
                                 break;
+                            case 'topics':
+                                manageGetTopics();
+                                break;
 
                             default:
                                 break;
@@ -559,6 +675,9 @@
                             case 'comments':
                                 managePutComments();
                                 break;
+                            case 'topics':
+                                managePutTopics();
+                                break;
                             default:
                                 break;
                         }
@@ -569,7 +688,7 @@
 
                         break
                     case 'DELETE':
-                    switch($('#node-input-contentType').val()){
+                        switch($('#node-input-contentType').val()){
                             case 'files':
                                 manageDeleteFiles();
                                 break;
@@ -578,6 +697,9 @@
                                 break;
                             case 'comments':
                                 manageDeleteComments();
+                                break;
+                            case 'topics':
+                                manageDeleteTopics();
                                 break;
                             default:
                                 break;
@@ -593,6 +715,9 @@
                                 break;
                             case 'comments':
                                 managePostComments();
+                                break;
+                            case 'topics':
+                                managePostTopics();
                                 break;
                             default:
                                 break;
@@ -753,6 +878,19 @@
             <label for="node-input-commentIdType"> By</label>
             <input type="text" id="node-input-commentIdType">
         </div>
+    </div>
+    
+    <div id="topicDiv">
+        <div class="form-row">
+            <label for="node-input-topicIdType"> By</label>
+            <input type="text" id="node-input-topicIdType">
+        </div>
+        <div class="form-row" id="row-id-topic">
+            <label for="node-input-idd2"><i class="fa fa-hashtag"></i> Id</label>
+            <input type="text" id="node-input-idd2" style="width:70%">
+            <input type="hidden" id="node-input-idd2type">
+        </div>
+
     </div>
 
     <div class="form-row" id="row-filter">
