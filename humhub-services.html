@@ -160,7 +160,7 @@
         oneditprepare: function(){
             //variables
             structGET={
-                        posts:[["id","num"],["Message's length","num"],["Likes","num"],["Topics","str"]],
+                        posts:[["Id","num"],["Message's length","num"],["Likes","num"],["Topics number","num"],["Comments number","num"],["Files number","num"],["Topics","str"],["Message containing","str"]],
                         files:[["example filename", "str"],],
                         comments:[["example filename", "str"],],
                         topics:[["example filename", "str"],],
@@ -767,7 +767,12 @@
 
                     filterKeyWidget.appendTo(row1);
                     filterOperatorWidget.appendTo(row1);
-                  
+                    if(filterKey==="Topics"||filterKey==="Message containing"){
+                            filterOperatorWidget.hide();
+                        }
+                        else{
+                            filterOperatorWidget.show();
+                        }
 
                      
                     $('<div/>',{style:"display:inline-block;text-align:right; width:120px; padding-right:10px; box-sizing:border-box;"})
@@ -778,7 +783,12 @@
                     filterValueWidget.appendTo(row2).typedInput({types:['msg','flow','global', getKeysType[getKeys.indexOf(filterKey)]]});
                     filterKeyWidget.change(function () {
                         filterValueWidget.remove();
-                        
+                        if($(this).val()==="Topics"||$(this).val()==="Message containing"){
+                            filterOperatorWidget.hide();
+                        }
+                        else{
+                            filterOperatorWidget.show();
+                        }
                         filterValueWidget=$('<input/>',{class:"node-input-filterValue",type:"text",style:"width: 300px;"});
                         filterValueWidget.appendTo(row2).typedInput({types:['msg','flow','global', getKeysType[getKeys.indexOf($(this).val())]]});
                         

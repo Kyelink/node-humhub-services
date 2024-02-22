@@ -13,6 +13,20 @@ straightforward as possible.
 ### Changed
  
 ### Fixed
+
+## [0.4.1] - 2024-02-22
+  
+Here we would have the update steps for 0.4.0 for people to follow.
+ 
+### Added
+
+Some filters for the GET posts method
+ 
+### Changed
+ 
+### Fixed
+
+Implemented filters logic other than Id
  
 ## [0.4.0] - 2024-02-21
   
