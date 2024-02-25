@@ -14,6 +14,16 @@ straightforward as possible.
  
 ### Fixed
 
+## [0.4.2] - 2024-02-25
+ 
+### Added
+ 
+### Changed
+ 
+### Fixed
+
+Filters default value bug
+
 ## [0.4.1] - 2024-02-22
   
 Here we would have the update steps for 0.4.0 for people to follow.

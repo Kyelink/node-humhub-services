@@ -1,8 +1,8 @@
 # node-red-contrib-humhub-services
 
 ![Platform](https://img.shields.io/badge/platform-Node--RED-red)
-![npm](https://img.shields.io/badge/npm-v0.1.1-blue)
-![Downloads](https://img.shields.io/badge/downloads-0k-green)
+![npm](https://img.shields.io/npm/v/@tec6/node-red-humhub-services?color=blue)
+![Downloads](https://img.shields.io/npm/dt/@tec6/node-red-humhub-services?color=green)
 ![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)
 
 Implement your Node-RED flows with the services proposed by the RESTful API of Humhub.

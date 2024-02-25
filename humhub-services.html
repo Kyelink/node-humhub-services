@@ -106,12 +106,12 @@
             method: {value:""},
             filters: {
                 value:[
-                    {
-                        filterKey: "id",
-                        filterOperator: "===",
-                        filterValue: "",
-                        filterValueType: "str",
-                    }
+                    // {
+                    //     filterKey: "id",
+                    //     filterOperator: "===",
+                    //     filterValue: "",
+                    //     filterValueType: "str",
+                    // }
                 ]
             },
             putPayload: {
@@ -740,7 +740,7 @@
                     //initialize filterAttributes to default or copy them
                     let filterValue="";
                     if(opt.filterValue){filterValue=opt.filterValue;}
-                    let filterValueType="str";
+                    let filterValueType="num";
                     if(opt.filterValueType){filterValueType=opt.filterValueType;}
                     let filterKey="";
                     if(getKeys.length){filterKey=getKeys[0];}
@@ -815,6 +815,7 @@
             });
 
             for (var i=0; i<this.filters.length; i++) {
+                console.log("filter added")
                 var filter = this.filters[i];
                 $("#node-input-filter-container").editableList('addItem',filter);            
 

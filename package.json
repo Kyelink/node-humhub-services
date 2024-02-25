@@ -1,6 +1,6 @@
 {
   "name": "@tec6/node-red-humhub-services",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "A node providing the services offered by the RESTful API of Humhub.",
   "main": "index.js",
   "scripts": {
@@ -28,5 +28,10 @@
   "dependencies": {
     "axios": "^1.6.7",
     "mime-types": "^2.1.35"
+  },
+  "homepage": "https://github.com/Kyelink/node-humhub-services#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kyelink/node-humhub-services.git"
   }
 }
