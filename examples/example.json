@@ -244,15 +244,6 @@
         "x": 700,
         "y": 420,
         "wires": []
-    },
-    {
-        "id": "81739e70269d8278",
-        "type": "client-credentials",
-        "name": "mdp/login",
-        "username": "infra@tec6.fr",
-        "password": "_8}$E6i=XKLXbr5",
-        "bearer_token": "",
-        "host": "humhub.tec6.fr",
-        "authentification": "Login"
     }
+    
 ]
