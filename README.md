@@ -74,3 +74,14 @@ To get the topics you can provide an Id, either one of a particular topic, or on
 ## Installation
 
 In order to set an API key go to `Administration -> Modules -> Installed -> Rest API` on your Humhub account.
+
+
+![humhub1](https://github.com/Kyelink/node-humhub-services/assets/143307261/97824401-cd6b-478e-8084-1ef5d453f18c)
+![humhub2](https://github.com/Kyelink/node-humhub-services/assets/143307261/e1d7c00f-abee-42cb-a8a8-71e0426da193)
+![humhub3](https://github.com/Kyelink/node-humhub-services/assets/143307261/7093b119-9e0c-411a-babd-a59e6abf744e)
+![humhub4](https://github.com/Kyelink/node-humhub-services/assets/143307261/75028c73-7d05-44b1-b9aa-14da4abaa318)
+![humhub5](https://github.com/Kyelink/node-humhub-services/assets/143307261/d20911c4-fc74-47bf-826e-197de12def72)
+
+
+
+
