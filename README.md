@@ -73,13 +73,22 @@ To get the topics you can provide an Id, either one of a particular topic, or on
 
 ## Installation
 
-In order to set an API key go to `Administration -> Modules -> Installed -> Rest API` on your Humhub account.
-
+In order to set an API access go to `Administration -> Modules on your Humhub account.
 
 ![humhub1](https://github.com/Kyelink/node-humhub-services/assets/143307261/97824401-cd6b-478e-8084-1ef5d453f18c)
+
 ![humhub2](https://github.com/Kyelink/node-humhub-services/assets/143307261/e1d7c00f-abee-42cb-a8a8-71e0426da193)
+
+Then install the restful API module, and click on configure in order to set an access with basic authentification or bearer token.
+
 ![humhub3](https://github.com/Kyelink/node-humhub-services/assets/143307261/7093b119-9e0c-411a-babd-a59e6abf744e)
+
+Under "General" choose to allow the access method you want to use.
+
 ![humhub4](https://github.com/Kyelink/node-humhub-services/assets/143307261/75028c73-7d05-44b1-b9aa-14da4abaa318)
+
+If you want to setup an access via bearer token, generate one in the "Bearer Auth" tab, and provide your account as an authorized user. Then you'll just have to add your token in your credentials node.
+
 ![humhub5](https://github.com/Kyelink/node-humhub-services/assets/143307261/d20911c4-fc74-47bf-826e-197de12def72)
 
 
