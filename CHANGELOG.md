@@ -2,17 +2,19 @@
 # Change Log
 All notable changes to this project will be documented in this file.
  
- 
-## [Unreleased] - yyyy-mm-dd
- 
-Here we write upgrading notes for brands. It's a team effort to make them as
-straightforward as possible.
+## [1.0.0] - 2024-04-04
  
 ### Added
  
+Search functionnalities by id.
+
 ### Changed
+
+Whole code refactored, error handling done, readme file made more digest.
  
 ### Fixed
+
+Bad request can't shutdown the server anymore.
 
 ## [0.4.2] - 2024-02-25
  
@@ -36,7 +38,7 @@ Some filters for the GET posts method
  
 ### Fixed
 
-Implemented filters logic other than Id
+Implemented filters logic other than Id.
  
 ## [0.4.0] - 2024-02-21
   

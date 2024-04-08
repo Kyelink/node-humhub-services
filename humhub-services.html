@@ -96,89 +96,56 @@
 
 
 <script type="text/javascript">
+    const structureHumhub={
+        posts:{
+            "GET ALL & FILTER":[],
+            "GET ONE":[{name:"Post's id", type:"num"}],
+            "DELETE":[{name:"Post's id", type:"num"}],
+            "UPDATE":[{name:"Post's id", type:"num"},{name:"Message", type:"str"},{name:"Scheduled at", type:"str"},{name:"Topics", type:"str"}],
+            "CREATE":[{name:"Container's id", type:"num"},{name:"Message", type:"str"},{name:"Scheduled at", type:"str"},{name:"Topics", type:"str"}]
+        },
+        files:{
+            "GET ONE":[{name:"Destination's path", type:"str"},{name:"File's id", type:"num"}],
+            "UPLOAD":[{name:"File's path", type:"str"},{name:"Post's id", type:"num"}],
+        },
+        comments:{
+            "GET ONE BY ID":[{name:"Comment's id", type:"num"}],
+            "GET ALL BY POST":[{name:"Post's id", type:"num"}],
+            "GET ALL BY OBJECT":[{name:"Object's id", type:"num"}],
+            "DELETE":[{name:"Comment's id", type:"num"}],
+            "CREATE":[{name:"Post's id", type:"num"},{name:"Message", type:"str"}],
+            "UPDATE":[{name:"Comment's id", type:"num"},{name:"Message", type:"str"}]
+        },
+        topics:{
+            "GET ALL":[],
+            "DELETE":[{name:"Topic's id", type:"num"}],
+            "CREATE":[{name:"Container's id", type:"num"},{name:"Topic's name", type:"str"}],
+            "UPDATE":[{name:"Topic's id", type:"num"},{name:"New name", type:"str"}],
+        }
+    };
     RED.nodes.registerType('humhub-services',{
         category: 'Humhub',
         color: '#a6bbcf',
         defaults: {
             
             creds: {type:"client-credentials",required:true},
-            contentType:{value:"posts"},
+            content:{value:"posts"},
             method: {value:""},
-            filters: {
-                value:[
-                    // {
-                    //     filterKey: "id",
-                    //     filterOperator: "===",
-                    //     filterValue: "",
-                    //     filterValueType: "str",
-                    // }
-                ]
-            },
-            putPayload: {
-                value:[
-                    {
-                        type: "str",
-                        value: ""
-
-                    }
-                ]
-            },
-            postPayload: {
-                value:[
-                    {
-                        type: "str",
-                        value: ""
-
-                    }
-                ]
-            },
-            idd:{
-				value: '',
-				required: false,
-				validate: RED.validators.typedInput('inputtype')
-            },
-            iddtype: { value: 'num' },
-            idd2:{
-				value: '',
-				required: false,
-				validate: RED.validators.typedInput('inputtype')
-            },
-            idd2type: { value: 'num' },
-            path:{
-				value: '',
-				required: false,
-				validate: RED.validators.typedInput('inputtype')
-            },
-            pathtype: { value: 'str' },
-            commentIdType:{value:"comment id"},
-            topicIdType:{value:"topic id"},
-
+            complexPayload: {value: []},
+            filters: {value: []}
         },
         inputs: 1,
         outputs: 1,
         icon: "humhub-logo.png",
         oneditprepare: function(){
             //variables
-            structGET={
-                        posts:[["Id","num"],["Message's length","num"],["Likes","num"],["Topics number","num"],["Comments number","num"],["Files number","num"],["Topics","str"],["Message containing","str"]],
-                        files:[["example filename", "str"],],
-                        comments:[["example filename", "str"],],
-                        topics:[["example filename", "str"],],
-            };
-            structPOST={
-                        posts:[["container id","num"],["message","str"],["scheduled_at","str"],["topics","str"]],
-                        files:[["file's path", "str"],["post id", "num"]],
-                        comments:[["post id", "num"],["message", "str"],],
-                        topics:[["container id", "num"],["name", "str"],],
-            };          
-            structPUT={
-                        posts:[["message","str"],["scheduled_at","str"],["topics","str"]],
-                        files:[["example filename", "str"],],
-                        comments:[["message", "str"],],
-                        topics:[["new name", "str"],],
-            };    
-
+                
+            structPosts=[["Id","num"],["Message's length","num"],["Likes","num"],["Topics number","num"],["Comments number","num"],["Files number","num"],["Topics","str"],["Message containing","str"]];
+            
             //functions
+            function manageDisplay(){
+                generateComplexField(structureHumhub[$("#node-input-content").val()][$('#node-input-method').val()])
+            }
             function createSelectWidget(nodeClass, selectOptions,width,marginRight){
                         var selectWidget = $('<select/>',{class:nodeClass,style:"width:"+width+"px; margin-right:"+marginRight+"px;"});
                         for (var i=0; i<selectOptions.length; i++) {
@@ -186,549 +153,63 @@
                         }
                         return selectWidget;
                     }
-            function emptyPutField(){
-                $('#node-input-putField').empty();
-            }
-            function emptyPostField(){
-                $('#node-input-postField').empty();
-            }
-            //management functions
-            function manageGetPosts(){
-                $('#row-path').hide();
-                $('#row-idd').hide();
-                $('#node-input-putField').hide();
-                $('#node-input-postField').hide();
-                $('#row-warning').hide();
-                $('#row-filter').show();
-                $('#commentDiv').hide();
-                $('#topicDiv').hide();
-            }
-            function manageGetFiles(){
-                $('#row-idd').show();
-                $('#row-filter').hide();
-                $('#row-path').show();
-                $('#node-input-putField').hide();
-                $('#node-input-postField').hide();
-                $('#row-warning').hide();
-                $('#commentDiv').hide();
-                $('#topicDiv').hide();
-            }
-            function manageGetComments(){
-                $('#row-path').hide();
-                $('#row-idd').show();
-                $('#row-filter').hide();
-                $('#node-input-putField').hide();
-                $('#node-input-postField').hide();
-                $('#row-warning').hide();
-                $('#commentDiv').show();
-                $('#topicDiv').hide();
-            }
-            function manageGetTopics(){
-                $('#row-path').hide();
-                $('#row-idd').hide();
-                $('#row-filter').hide();
-                $('#node-input-putField').hide();
-                $('#node-input-postField').hide();
-                $('#row-warning').hide();
-                $('#commentDiv').hide();
-                $('#topicDiv').show();
-            }
-            function managePutPosts(){
-                $('#node-input-putField').show();
-                $('#row-warning').hide();
-                $('#row-idd').show();
-                $('#row-filter').hide();
-                $('#node-input-postField').hide();
-                $('#row-path').hide();
-                $('#commentDiv').hide();
-                $('#topicDiv').hide();
-            }
-            function managePutFiles(){
-                $('#row-idd').hide();
-                $('#node-input-putField').hide();
-                $('#row-warning').show();
-                $('#row-filter').hide();
-                $('#node-input-postField').hide();
-                $('#row-path').hide();
-                $('#commentDiv').hide();
-                $('#topicDiv').hide();
-            }
-            function managePutComments(){
-                $('#node-input-putField').show();
-                $('#row-warning').hide();
-                $('#row-idd').show();
-                $('#row-filter').hide();
-                $('#node-input-postField').hide();
-                $('#row-path').hide();
-                $('#commentDiv').hide();
-                $('#topicDiv').hide();
-            }
-            function managePutTopics(){
-                $('#node-input-putField').show();
-                $('#row-warning').hide();
-                $('#row-idd').show();
-                $('#row-filter').hide();
-                $('#node-input-postField').hide();
-                $('#row-path').hide();
-                $('#commentDiv').hide();
-                $('#topicDiv').hide();
-            }
-            function managePostPosts(){
-                $('#row-warning').hide();    
-                $('#row-idd').hide();
-                $('#row-filter').hide();
-                $('#node-input-putField').hide();
-                $('#node-input-postField').show();
-                $('#row-path').hide();     
-                $('#commentDiv').hide(); 
-                $('#topicDiv').hide();          
-            }
-            function managePostFiles(){
-                $('#row-warning').hide();    
-                $('#row-idd').hide();
-                $('#row-filter').hide();
-                $('#node-input-putField').hide();
-                $('#node-input-postField').show();
-                $('#row-path').hide();     
-                $('#commentDiv').hide();       
-                $('#topicDiv').hide();   
-            }
-            function managePostComments(){
-                $('#row-warning').hide();    
-                $('#row-idd').hide();
-                $('#row-filter').hide();
-                $('#node-input-putField').hide();
-                $('#node-input-postField').show();
-                $('#row-path').hide();
-                $('#commentDiv').hide();
-                $('#topicDiv').hide();
-            }
-            function managePostTopics(){
-                $('#row-warning').hide();    
-                $('#row-idd').hide();
-                $('#row-filter').hide();
-                $('#node-input-putField').hide();
-                $('#node-input-postField').show();
-                $('#row-path').hide();
-                $('#commentDiv').hide();
-                $('#topicDiv').hide();
-            }
-            function manageDeletePosts(){
-                $('#row-idd').show();
-                $('#row-warning').hide();
-                $('#row-filter').hide();
-                $('#node-input-putField').hide();
-                $('#node-input-postField').hide();
-                $('#row-path').hide();
-                $('#commentDiv').hide();
-                $('#topicDiv').hide();
-            }
-            function manageDeleteFiles(){
-                $('#row-idd').hide();
-                $('#row-warning').show();
-                $('#row-filter').hide();
-                $('#node-input-putField').hide();
-                $('#node-input-postField').hide();
-                $('#row-path').hide();
-                $('#commentDiv').hide();
-                $('#topicDiv').hide();
-            }
-            function manageDeleteComments(){
-                $('#row-idd').show();
-                $('#row-warning').hide();
-                $('#row-filter').hide();
-                $('#node-input-putField').hide();
-                $('#node-input-postField').hide();
-                $('#row-path').hide();
-                $('#commentDiv').hide();
-                $('#topicDiv').hide();
-            }
-            function manageDeleteTopics(){
-                $('#row-idd').show();
-                $('#row-warning').hide();
-                $('#row-filter').hide();
-                $('#node-input-putField').hide();
-                $('#node-input-postField').hide();
-                $('#row-path').hide();
-                $('#commentDiv').hide();
-                $('#topicDiv').hide();
-            }
+
             //code
-            if(!this.putPayload){this.putPayload=[];}
-            if(!this.postPayload){this.postPayload=[];}
 
-            console.log("type de contenu init à : "+this.contentType,this);
+            let getKeys = structPosts.map(x=>x[0]);
+            let getKeysType = structPosts.map(x=>x[1]);
 
-            let getKeys = structGET[this.contentType].map(x=>x[0]);
-            let getKeysType = structGET[this.contentType].map(x=>x[1]);
-            let initContentType=this.contentType;
-            let putKeys = structPUT[this.contentType].map(x=>x[0]);
-            let putKeysType = structPUT[this.contentType].map(x=>x[1]);
-            let postKeys = structPOST[this.contentType].map(x=>x[0]);
-            let postKeysType = structPOST[this.contentType].map(x=>x[1]);
 
-            console.log("putkeys : "+putKeys);
-
-            // createPutField();
-            for(let i=0;i<putKeys.length;i++){
-           
-           var row = $('<div/>',{style:"display:flex; align-items: baseline; margin-top:8px;"})
-           .appendTo($('#node-input-putField'));
-           $('<div/>',{style:"display:inline-block;text-align:right; width:120px; padding-right:10px; box-sizing:border-box;"})
-                       .text(putKeys[i]+" :")
-                       .appendTo(row);
-           var putPayloadWidget = $('<input/>',{class:"node-input-putPayload",id:"node-input-putPayload"+i,type:"text",style:"width: 300px;"})
-           .appendTo(row).typedInput({types:['msg','flow','global',putKeysType[i]]});
-           if(!this.putPayload[i]){
-               this.putPayload[i]={value:"payload."+putKeys[i],type:"msg"};
-               putPayloadWidget.typedInput('value',"payload."+putKeys[i]);
-               putPayloadWidget.typedInput('type',"msg");
-           }
-           else{
-               
-
-               putPayloadWidget.typedInput('value',this.putPayload[i].value);
-               putPayloadWidget.typedInput('type',this.putPayload[i].type);
-           }
-        }
-        
-            for(let i=0;i<postKeys.length;i++){
-           
+            function generateComplexField(object){
+                $('#complexPayload').empty();
+                object.map((element,i)=>{
                 var row = $('<div/>',{style:"display:flex; align-items: baseline; margin-top:8px;"})
-                .appendTo($('#node-input-postField'));
+                .appendTo($('#complexPayload'));
                 $('<div/>',{style:"display:inline-block;text-align:right; width:120px; padding-right:10px; box-sizing:border-box;"})
-                            .text(postKeys[i]+" :")
-                            .appendTo(row);
-                var postPayloadWidget = $('<input/>',{class:"node-input-postPayload",id:"node-input-postPayload"+i,type:"text",style:"width: 300px;"})
-                .appendTo(row).typedInput({types:['msg','flow','global',postKeysType[i]]});
-                if(!this.postPayload[i]){
-                    this.postPayload[i]={value:"payload."+postKeys[i],type:"msg"};
-                    postPayloadWidget.typedInput('value',"payload."+postKeys[i]);
-                    postPayloadWidget.typedInput('type',"msg");
-                }
-                else{
-                    postPayloadWidget.typedInput('value',this.postPayload[i].value);
-                    postPayloadWidget.typedInput('type',this.postPayload[i].type);
-                }
+                                .text(" "+element['name']+" :")
+                                .appendTo(row);
+                    var complexPayloadWidget = $('<input/>',{class:"classComplexPayload",id:"property"+i,type:"text",style:"width: 300px;"})
+                    .appendTo(row)
+                    
+                    
+                    
+                    // complexPayloadWidget.typedInput('value',"test value "+i);
+                    if(element['type']!='select'){
+                        complexPayloadWidget.typedInput({types:['msg','flow','global',element['type']]});
+                        complexPayloadWidget.typedInput('type',element['type']);
+                    }
+                    else{
+                        complexPayloadWidget.typedInput({types: [
+                            {
+                                value: element['name'],
+                                options: element['options'].map(x=>{return{ value: x, label: x}})
+                            }
+                        ]});
+                    }
+                    if(!complexPayload[i]){
+                        if(!element.hasOwnProperty('default')){complexPayloadWidget.typedInput('value',"");}
+                        else{complexPayloadWidget.typedInput('value',element['default']);}
+                    }
+                    else{
+                        complexPayloadWidget.typedInput('value',complexPayload[i].value);
+                        if(element['type']!='select'){
+                        complexPayloadWidget.typedInput('type',complexPayload[i].type);
+                    }
+                    }
+                })
             }
+            //node-red oneditprepare
+            if(!this.complexPayload){this.complexPayload=[];}
+            let complexPayload=this.complexPayload;
+            
+            let initContent=this.content;
+            let initMethod=this.method;
 
-            $('#node-input-idd').typedInput({
-                default: 'num',
-                typeField: $("#node-input-iddtype"),
-                types: ['flow','global','msg','num']
-            });
-            $('#node-input-idd2').typedInput({
-                default: 'num',
-                typeField: $("#node-input-idd2type"),
-                types: ['flow','global','msg','num']
-            });
-            $('#node-input-path').typedInput({
-                default: 'str',
-                typeField: $("#node-input-pathtype"),
-                types: ['flow','global','msg','str']
-            });
 
-            $("#node-input-contentType").typedInput({
-                types: [
-                    {
-                        value: "contentType",
-                        options: [
-                            { value: "posts", label: "posts"},
-                            { value: "files", label: "files"},
-                            { value: "comments", label: "comments"},
-                            { value: "topics", label: "topics"},
-
-                        ]
-                    }
-                ]
-            });
-
-            $("#node-input-contentType").change(function () {
-                console.log("changement de type de contenu à : "+$(this).val());
-                if(initContentType!=$(this).val()){
-                    this.filters=[];
-                    initContentType=$(this).val();
-                    $("#node-input-filter-container").editableList('empty');
-                    console.log("container content : "+this.filters);
-                    
-                getKeys = structGET[initContentType].map(x=>x[0]);
-                getKeysType = structGET[initContentType].map(x=>x[1]);
-                putKeys = structPUT[initContentType].map(x=>x[0]);
-                putKeysType = structPUT[initContentType].map(x=>x[1]);
-                postKeys = structPOST[initContentType].map(x=>x[0]);
-                postKeysType = structPOST[initContentType].map(x=>x[1]);
-                this.putPayload=[];
-                this.postPayload=[];
-                emptyPutField();
-                emptyPostField();
-                for(let i=0;i<putKeys.length;i++){
            
-                    var row = $('<div/>',{style:"display:flex; align-items: baseline; margin-top:8px;"})
-                    .appendTo($('#node-input-putField'));
-                    $('<div/>',{style:"display:inline-block;text-align:right; width:120px; padding-right:10px; box-sizing:border-box;"})
-                                .text(putKeys[i]+" :")
-                                .appendTo(row);
-                    var putPayloadWidget = $('<input/>',{class:"node-input-putPayload",id:"node-input-putPayload"+i,type:"text",style:"width: 300px;"})
-                    .appendTo(row).typedInput({types:['msg','flow','global',putKeysType[i]]});
-                    
-                    this.putPayload[i]={value:"payload."+putKeys[i],type:"msg"};
-                    putPayloadWidget.typedInput('value',"payload."+putKeys[i]);
-                    putPayloadWidget.typedInput('type',"msg");
-                    
-                }
-                
-                for(let i=0;i<postKeys.length;i++){
-           
-                    var row = $('<div/>',{style:"display:flex; align-items: baseline; margin-top:8px;"})
-                    .appendTo($('#node-input-postField'));
-                    $('<div/>',{style:"display:inline-block;text-align:right; width:120px; padding-right:10px; box-sizing:border-box;"})
-                                .text(postKeys[i]+" :")
-                                .appendTo(row);
-                    var postPayloadWidget = $('<input/>',{class:"node-input-postPayload",id:"node-input-postPayload"+i,type:"text",style:"width: 300px;"})
-                    .appendTo(row).typedInput({types:['msg','flow','global',postKeysType[i]]});
-                    
-                    this.postPayload[i]={value:"payload."+postKeys[i],type:"msg"};
-                    postPayloadWidget.typedInput('value',"payload."+postKeys[i]);
-                    postPayloadWidget.typedInput('type',"msg");
-                    
-                }
-                
-                switch ($(this).val()) {
-                    case "posts":
-                        switch ($('#node-input-method').val()) {
-                            case 'PUT':
-                                managePutPosts();
-                                break;
-                            case 'GET':
-                                manageGetPosts();                                
-                                break;
-                            case 'DELETE':
-                                manageDeletePosts();                                
-                                break;
-                            case 'POST':
-                                managePostPosts();
-                                break;
-                        
-                            default:
-                                break;
-                        }
-                        
-                        break;
-                    case "files":
-                        switch ($('#node-input-method').val()) {
-                            case 'PUT':
-                                managePutFiles();
-                                break;
-                            case 'GET':
-                                manageGetFiles();
-                                break;
-                            case 'DELETE':
-                                manageDeleteFiles();                                
-                                break;
-                            case 'POST':
-                                managePostFiles();                                
-                                break;
-                        
-                            default:
-                                break;
-                        }
-                        
-                        break;
-                    
-                    case "comments":
-                        switch ($('#node-input-method').val()) {
-                            case 'PUT':
-                                managePutComments();
-                                break;
-                            case 'GET':
-                                manageGetComments();
-                                break;
-                            case 'DELETE':
-                                manageDeleteComments();                                
-                                break;
-                            case 'POST':
-                                managePostComments();                                
-                                break;
-                        
-                            default:
-                                break;
-                        }
-                        
-                        break;
-                    
-                    case "topics":
-                        switch ($('#node-input-method').val()) {
-                            case 'PUT':
-                                managePutTopics();
-                                break;
-                            case 'GET':
-                                manageGetTopics();
-                                break;
-                            case 'DELETE':
-                                manageDeleteTopics();                                
-                                break;
-                            case 'POST':
-                                managePostTopics();                                
-                                break;
-                        
-                            default:
-                                break;
-                        }
-                        
-                        break;
-                
-                    default:
-                        break;
-                }
-
-                }
-                
-               
-            })
-            $("#node-input-commentIdType").typedInput({
-                types: [
-                    {
-                        value: "commentIdType",
-                        options: [
-                            { value: "comment id", label: "comment id"},
-                            { value: "post id", label: "post id"},
-                            { value: "content id", label: "content id"},
-                            
-                        ]
-                    }
-                ]
-            });
-            $("#node-input-topicIdType").typedInput({
-                types: [
-                    {
-                        value: "topicIdType",
-                        options: [
-                            { value: "all topics", label: "all topics"},
-                            { value: "container id", label: "container id"},
-                            { value: "topic id", label: "topic id"},
-                            
-                        ]
-                    }
-                ]
-            });
-            $("#node-input-topicIdType").change(function () {
-                switch ($(this).val()) {
-                    case 'all topics':
-                        $('#row-id-topic').hide();
-                        break;
-                    default:
-                        $('#row-id-topic').show();
-                        break;
-                }
-            });
             
+   
 
-            $("#node-input-method").typedInput({
-                types: [
-                    {
-                        value: "method",
-                        options: [
-                            { value: "GET", label: "GET"},
-                            { value: "PUT", label: "PUT"},
-                            { value: "DELETE", label: "DELETE"},
-                            { value: "POST", label: "POST"}
-                        ]
-                    }
-                ]
-            });
-
-            
-
-            $("#node-input-method").change(function () {
-                switch ($(this).val()) {
-                    case 'GET':
-                        console.log('GET')
-                        switch($('#node-input-contentType').val()){
-                            case 'files':
-                                manageGetFiles();
-                                break;
-
-                            case 'posts':
-                                manageGetPosts();
-                                break;
-
-                            case 'comments':
-                                manageGetComments();
-                                break;
-                            case 'topics':
-                                manageGetTopics();
-                                break;
-
-                            default:
-                                break;
-                        }
-                        break
-                    case 'PUT':
-                        console.log('PUT');
-                        switch($('#node-input-contentType').val()){
-                            case 'files':
-                                managePutFiles();
-                                break;
-                            case 'posts':
-                                managePutPosts();
-                                break;
-                            case 'comments':
-                                managePutComments();
-                                break;
-                            case 'topics':
-                                managePutTopics();
-                                break;
-                            default:
-                                break;
-                        }
-
-                       
-                        
-                        
-
-                        break
-                    case 'DELETE':
-                        switch($('#node-input-contentType').val()){
-                            case 'files':
-                                manageDeleteFiles();
-                                break;
-                            case 'posts':
-                                manageDeletePosts();
-                                break;
-                            case 'comments':
-                                manageDeleteComments();
-                                break;
-                            case 'topics':
-                                manageDeleteTopics();
-                                break;
-                            default:
-                                break;
-                        }
-                        break
-                    case 'POST':
-                    switch($('#node-input-contentType').val()){
-                            case 'files':
-                                managePostFiles();
-                                break;
-                            case 'posts':
-                                managePostPosts();
-                                break;
-                            case 'comments':
-                                managePostComments();
-                                break;
-                            case 'topics':
-                                managePostTopics();
-                                break;
-                            default:
-                                break;
-                        }
-                       
-                        break
-                    default:
-                        console.log('default')
-                }
-            })
-            
             $('#node-input-filter-container').css('min-height','375px').css('min-width','450px').css('overflow-x','clip').editableList({
                 addItem: function(container,i,opt) {
                     container.css({
@@ -791,9 +272,6 @@
                         }
                         filterValueWidget=$('<input/>',{class:"node-input-filterValue",type:"text",style:"width: 300px;"});
                         filterValueWidget.appendTo(row2).typedInput({types:['msg','flow','global', getKeysType[getKeys.indexOf($(this).val())]]});
-                        
-                        console.log("changed type to "+getKeysType[getKeys.indexOf($(this).val())],this);
-
                     });
                     filterValueWidget.typedInput('value',filterValue);
                     try{
@@ -814,6 +292,72 @@
 
             });
 
+
+
+
+
+            
+            const optionsContent=Object.keys(structureHumhub).map(x=>{
+                return{value: x, label: x};
+            });
+            $("#node-input-content").typedInput({
+                types: [
+                    {
+                        value: "content",
+                        options: optionsContent
+                    }
+                ]
+            });
+            
+            $("#node-input-content").change(function () {
+                if($("#node-input-content").val()=="posts"&&$("#node-input-method").val()=="GET ALL & FILTER"){$('#row-filter').show();}
+                else{$('#row-filter').hide();}
+                if(initContent&&initContent!=$(this).val()){
+                    initContent=$(this).val();
+                    const methodOptions=Object.keys(structureHumhub[$(this).val()]).map(x=>{
+                        return{value: x, label: x};})
+                    initMethod=methodOptions[0]['value'];
+                    this.filters=[];
+                    getKeys = structPosts.map(x=>x[0]);
+                    getKeysType = structPosts.map(x=>x[1]);
+                    $("#node-input-filter-container").editableList('empty');
+                    complexPayload=[];
+                    $("#node-input-method").typedInput(
+                        'types', [
+                            {
+                                value: "method",
+                                options: methodOptions
+                            }
+                        ]
+                    );
+                    manageDisplay(this);
+                }
+            });
+            
+            $("#node-input-method").typedInput({
+                types: [
+                    {
+                        value: "method",
+                        options: Object.keys(structureHumhub[$("#node-input-content").val()]).map(x=>{
+                return{value: x, label: x};})
+                    }
+                ]
+            });
+
+            $("#node-input-method").change(function () {
+                if($("#node-input-content").val()=="posts"&&$("#node-input-method").val()=="GET ALL & FILTER"){$('#row-filter').show();}
+                else{$('#row-filter').hide();}
+                if(initMethod&&initMethod!=$(this).val()){
+                    initMethod=$(this).val();
+                    complexPayload=[];
+                    manageDisplay(this);
+                }
+            });
+            manageDisplay();
+
+
+
+
             for (var i=0; i<this.filters.length; i++) {
                 console.log("filter added")
                 var filter = this.filters[i];
@@ -823,9 +367,18 @@
             
         },
         oneditsave: function() {
-            console.log('save', this);
+            this.complexPayload=[];
+            var sz=$("#complexPayload").find(".classComplexPayload").length;
+            for(let i=0;i<sz;i++){
+                let temp=$("#complexPayload").find("#property"+i);
+                this.complexPayload.push({
+                    value:temp.typedInput('value'),
+                    type:temp.typedInput('type'),
+                    name:structureHumhub[$("#node-input-content").val()][$("#node-input-method").val()][i]['name']
+                });
+            }
+
             this.filters=[];
-      
             var tempFilters=$("#node-input-filter-container").editableList('items');
             for(let i=0;i<tempFilters.length;i++){
                 let filterWidget=tempFilters[i];
@@ -843,26 +396,10 @@
 
             };
             
-            this.putPayload=[];
-            var tempPutPayload=$("#node-input-putField").find(".node-input-putPayload");
-            var sz=tempPutPayload.length;
-            for(let i=0;i<sz;i++){
-                let temp=$("#node-input-putField").find("#node-input-putPayload"+i);
-                this.putPayload.push({value:temp.typedInput('value'),
-                type:temp.typedInput('type')});
-            }
             
-            this.postPayload=[];
-            var tempPostPayload=$("#node-input-postField").find(".node-input-postPayload");
-            var sz=tempPostPayload.length;
-            for(let i=0;i<sz;i++){
-                let temp=$("#node-input-postField").find("#node-input-postPayload"+i);
-                this.postPayload.push({value:temp.typedInput('value'),
-                type:temp.typedInput('type')});
-            }
         },
         oneditresize: function() {
-            console.log('resize', this);
+           
         },
         label: function() {
             return this.name||"humhub-services";
@@ -876,32 +413,13 @@
         <input type="text" id="node-input-creds">
     </div>
     <div class="form-row">
-        <label for="node-input-method"> Method</label>
-        <input type="text" id="node-input-method">
+        <label for="node-input-content"> What</label>
+        <input type="text" id="node-input-content">
     </div>
+
     <div class="form-row">
-        <label for="node-input-contentType"> What </label>
-        <input type="text" id="node-input-contentType">
-    </div>
-
-    <div id="commentDiv">
-        <div class="form-row">
-            <label for="node-input-commentIdType"> By</label>
-            <input type="text" id="node-input-commentIdType">
-        </div>
-    </div>
-    
-    <div id="topicDiv">
-        <div class="form-row">
-            <label for="node-input-topicIdType"> By</label>
-            <input type="text" id="node-input-topicIdType">
-        </div>
-        <div class="form-row" id="row-id-topic">
-            <label for="node-input-idd2"><i class="fa fa-hashtag"></i> Id</label>
-            <input type="text" id="node-input-idd2" style="width:70%">
-            <input type="hidden" id="node-input-idd2type">
-        </div>
-
+        <label for="node-input-method"> Action</label>
+        <input type="text" id="node-input-method">
     </div>
 
     <div class="form-row" id="row-filter">
@@ -919,41 +437,9 @@
                 
             </ol>
         </div>
-
-        
-
     </div>
 
-    
-    <div class="form-row" id="row-path">
-		<label for="node-input-path"><i class="fa fa-hashtag"></i> Path</label>
-		<input type="text" id="node-input-path" style="width:70%">
-		<input type="hidden" id="node-input-pathtype">
-    </div>
-
-    <div class="form-row" id="row-idd">
-		<label for="node-input-idd"><i class="fa fa-hashtag"></i> Id</label>
-		<input type="text" id="node-input-idd" style="width:70%">
-		<input type="hidden" id="node-input-iddtype">
-    </div>
-
-    <div class="form-row" id="node-input-putField">
-           
-    </div>
-
-    <div class="form-row" id="node-input-postField">
-
-       
-    </div>
-
-    <div class="form-row" style="margin-bottom:0;" id="row-warning">
-        <i class="fa fa-warning">  Content not implemented by Humhub's API</i>
-    </div>
-    
-
-
-
-
+    <div class="form-row" id="complexPayload"></div>
 </script>
 
 <script type="text/html" data-help-name="humhub-services">
